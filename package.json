@@ -1,0 +1,23 @@
+{
+  "name": "spotify-plus-plus-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/App.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JamesHarrisonZa/spotify-plus-plus-server.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JamesHarrisonZa/spotify-plus-plus-server/issues"
+  },
+  "homepage": "https://github.com/JamesHarrisonZa/spotify-plus-plus-server#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "spotify-web-api-node": "^4.0.0"
+  }
+}
