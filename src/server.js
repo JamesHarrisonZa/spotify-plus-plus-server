@@ -3,7 +3,7 @@ const request = require('request');
 const SpotifyWebApi = require('spotify-web-api-node');
 
 const app = express();
-    
+
 require('dotenv').config(); //ToDo: This is only needed for local. 
 const spotify = new SpotifyWebApi({
     clientId: process.env.SPOTIFY_CLIENT_ID,
@@ -21,32 +21,23 @@ app.get('/login', function (req, res) {
 
 app.get('/callback', function (req, res) {
     const code = req.query.code || null
-    console.log(`Got Access token: ${code}`);
-    //ToDo: Change to use spotify-web-api-node
-    const authOptions = {
-        url: 'https://accounts.spotify.com/api/token',
-        form: {
-            code: code,
-            redirect_uri: process.env.SPOTIFY_REDIRECT_URI,
-            grant_type: 'authorization_code'
-        },
-        headers: {
-            'Authorization': 'Basic ' + (new Buffer(
-                process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET
-            ).toString('base64'))
-        },
-        json: true
-    }
-    request.post(authOptions, function (error, response, body) {
-        const access_token = body.access_token;
-        const uri = process.env.FRONTEND_URI || 'http://localhost:3000';
-        res.redirect(uri + '?access_token=' + access_token);
-    });
-});
+    //console.log(`Got code from spotify: ${code}`);
+    spotify.authorizationCodeGrant(code)
+        .then((data) => {
+            const accessToken = data.body['access_token'];
+            const refreshToken = data.body['refresh_token'];
 
-console.log(`SPOTIFY_CLIENT_ID: ${process.env.SPOTIFY_CLIENT_ID}`);
-console.log(`SPOTIFY_CLIENT_SECRET: ${process.env.SPOTIFY_CLIENT_SECRET}`);
-console.log(`SPOTIFY_REDIRECT_URI: ${process.env.SPOTIFY_REDIRECT_URI}`);
+            // console.log(`The access token is: ${accessToken}`);
+            // console.log(`The refresh token is: ${refreshToken} `);
+            // console.log(`The token expires in: ${data.body['expires_in']}`);
+
+            const uri = process.env.FRONTEND_URI || 'http://localhost:3000';
+            res.redirect(`${uri}?access_token=${accessToken}&refresh_token=${refreshToken}`);
+        })
+        .catch((err) => {
+            console.log('Something went wrong!', err);
+        });
+});
 
 const port = process.env.PORT || 42420;
 console.log(`Listening on port http://localhost:${port}`);
