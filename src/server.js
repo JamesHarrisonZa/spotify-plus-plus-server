@@ -1,5 +1,4 @@
 const express = require('express');
-const request = require('request');
 const SpotifyWebApi = require('spotify-web-api-node');
 
 const app = express();
